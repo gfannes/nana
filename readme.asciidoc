@@ -1,11 +1,10 @@
-Readme
-======
+== Readme
 
 This repository is basically a clone of http://nanapro.codeplex.com/ which I created to browse it with my iPad.
 
-== Compilation
+=== Compilation
 
-=== Linux
+==== Linux
 
 * cd nana/Nana.Cpp11/build/makefile
 * make -j 4
