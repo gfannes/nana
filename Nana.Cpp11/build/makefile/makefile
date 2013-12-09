@@ -2,45 +2,80 @@
 #
 #Makefile created by Jinhao(cnjinhao@hotmail.com)
 
-GCC	= g++
-INCROOT	= ../../include
-SRCROOT	= ../../source
+.PHONY: help clean lib build-tests run-tests
+
+help:
+	@echo "make (help|clean|lib|build-tests|run-tests)"
+
 BINDIR = ../bin
-NANA_INC= $(INCROOT)/nana
 
-INCS	= -I$(INCROOT) -I/usr/include/freetype2
+LIB	= $(BINDIR)/libnana.a
+lib: $(LIB)
 
-BIN	= libnana.a
+UNIT_TESTS	= $(BINDIR)/ut_nana.exe
+build-tests: $(UNIT_TESTS)
+run-tests: build-tests
+	$(UNIT_TESTS)
 
-SRC_NANA = $(wildcard $(SRCROOT)/*.cpp)
-SRC_DETAIL = $(wildcard $(SRCROOT)/detail/*.cpp)
-SRC_FILESYSTEM = $(wildcard $(SRCROOT)/filesystem/*.cpp)
-SRC_AUDIO = $(wildcard $(SRCROOT)/audio/*.cpp)
-SRC_AUDIO_DETAIL = $(wildcard $(SRCROOT)/audio/detail/*.cpp)
-SRC_GUI = $(wildcard $(SRCROOT)/gui/*.cpp)
-SRC_GUI_DETAIL = $(wildcard $(SRCROOT)/gui/detail/*.cpp)
-SRC_GUI_WIDGETS = $(wildcard $(SRCROOT)/gui/widgets/*.cpp)
-SRC_GUI_WIDGETS_SKELETONS = $(wildcard $(SRCROOT)/gui/widgets/skeletons/*.cpp)
-SRC_PAINT = $(wildcard $(SRCROOT)/paint/*.cpp)
-SRC_PAINT_DETAIL = $(wildcard $(SRCROOT)/paint/detail/*.cpp)
-SRC_SYSTEM = $(wildcard $(SRCROOT)/system/*.cpp)
-SRC_THREADS= $(wildcard $(SRCROOT)/threads/*.cpp)
+#Directories
+INCROOT	 = ../../include
+SRCROOT	 = ../../source
+TESTROOT = ../../test
 
-SOURCES = $(SRC_NANA) $(SRC_DETAIL) $(SRC_FILESYSTEM) $(SRC_AUDIO) $(SRC_AUDIO_DETAIL) $(SRC_GUI) $(SRC_GUI_DETAIL) $(SRC_GUI_WIDGETS) $(SRC_GUI_WIDGETS_SKELETONS) $(SRC_PAINT) $(SRC_PAINT_DETAIL) $(SRC_SYSTEM) $(SRC_THREADS)
+#Include options
+INCS4LIB	= -I$(INCROOT) -I/usr/include/freetype2
+INCS4TEST	= -I$(INCROOT) -I$(TESTROOT)
 
-LINKOBJ	= $(SOURCES:.cpp=.o)
+#Source files for the nana library
+SRCS4LIB = $(wildcard $(SRCROOT)/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/detail/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/filesystem/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/audio/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/audio/detail/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/gui/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/gui/detail/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/gui/widgets/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/gui/widgets/skeletons/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/paint/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/paint/detail/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/system/*.cpp)
+SRCS4LIB += $(wildcard $(SRCROOT)/threads/*.cpp)
+#Object files for the library
+OBJS4LIB  = $(SRCS4LIB:.cpp=.lib.o)
 
-$(BIN): $(LINKOBJ) $(BINDIR)
-	ar r $(BINDIR)/$(BIN) $(LINKOBJ)
-	ranlib $(BINDIR)/$(BIN)
+#Source files for the tests
+SRCS4TEST = $(wildcard $(TESTROOT)/*.cpp)
+#Object files for the tests
+OBJS4TEST = $(SRCS4TEST:.cpp=.test.o)
 
-$(BINDIR):
-	mkdir $(BINDIR)
+#Instruments needed
+GCC	= g++
+AR = ar
+RANLIB = ranlib
+MKDIR = mkdir
+RM = rm
 
-.cpp.o:
-	$(GCC) -g -c $< -o $@ $(INCS) -std=c++0x -Wall
+#Compilation rules
+COMPILE_OPTIONS = -c -g -std=c++0x -Wall
+%.lib.o: %.cpp
+	$(GCC) $(COMPILE_OPTIONS) $(INCS4LIB) $< -o $@
+%.test.o: %.cpp
+	$(GCC) $(COMPILE_OPTIONS) $(INCS4TEST) $< -o $@
+
+#Linking a library
+$(LIB): $(OBJS4LIB)
+	-$(MKDIR) $(BINDIR)
+	$(AR) r $(LIB) $(OBJS4LIB)
+	$(RANLIB) $(LIB)
+
+#Linking an executable
+LINK_OPTIONS = 
+$(UNIT_TESTS): $(LIB) $(OBJS4TEST)
+	$(GCC) -o $@ $(OBJS4TEST) $(LINK_OPTIONS)
 
 clean:
-	rm -f $(LINKOBJ)
-	rm -f $(BINDIR)/$(BIN)
+	$(RM) -f $(OBJS4LIB)
+	$(RM) -f $(LIB)
+	$(RM) -f $(OBJS4TEST)
+	$(RM) -f $(UNIT_TESTS)
 
