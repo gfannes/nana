@@ -7,4 +7,5 @@ This repository is basically a clone of http://nanapro.codeplex.com/ which I cre
 ==== Linux
 
 * cd nana/Nana.Cpp11/build/makefile
-* make -j 4
+* make lib
+* make run-tests
