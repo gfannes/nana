@@ -5,6 +5,7 @@
 GCC	= g++
 INCROOT	= ../../include
 SRCROOT	= ../../source
+BINDIR = ../bin
 NANA_INC= $(INCROOT)/nana
 
 INCS	= -I$(INCROOT) -I/usr/include/freetype2
@@ -29,14 +30,17 @@ SOURCES = $(SRC_NANA) $(SRC_DETAIL) $(SRC_FILESYSTEM) $(SRC_AUDIO) $(SRC_AUDIO_D
 
 LINKOBJ	= $(SOURCES:.cpp=.o)
 
-$(BIN): $(LINKOBJ)
-	ar r ../bin/$(BIN) $(LINKOBJ)
-	ranlib ../bin/$(BIN)
+$(BIN): $(LINKOBJ) $(BINDIR)
+	ar r $(BINDIR)/$(BIN) $(LINKOBJ)
+	ranlib $(BINDIR)/$(BIN)
+
+$(BINDIR):
+	mkdir $(BINDIR)
 
 .cpp.o:
 	$(GCC) -g -c $< -o $@ $(INCS) -std=c++0x -Wall
 
 clean:
 	rm -f $(LINKOBJ)
-	rm -f ../bin/$(BIN)
+	rm -f $(BINDIR)/$(BIN)
 

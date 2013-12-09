@@ -649,7 +649,8 @@ namespace nana{	namespace gui
 		void _m_sel_file(const eventinfo& ei)
 		{
 			std::vector<std::pair<std::size_t, std::size_t> > sel;
-			ls_file_.selected(sel);
+            //GFA::Disabled for now to get things compiling
+			//ls_file_.selected(sel);
 			if(sel.size() == 0)
 				return;
 			std::pair<std::size_t, std::size_t> index = sel[0];

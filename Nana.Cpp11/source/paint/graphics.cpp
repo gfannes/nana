@@ -306,6 +306,7 @@ namespace paint
 
 				::ReleaseDC(0, hdc);
 #elif defined(NANA_X11)
+                auto & spec = nana::detail::platform_spec::instance();
 				Display* disp = spec.open_display();
 				int screen = DefaultScreen(disp);
 				Window root = ::XRootWindow(disp, screen);
